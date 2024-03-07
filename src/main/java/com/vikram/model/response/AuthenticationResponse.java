@@ -14,10 +14,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AuthenticationResponse {
 
-	
 	private String accessToken;
-	  private String refreshToken;
-	  private boolean mfaEnabled;
-	  private String secretImageUri;
-	
+	private String refreshToken;
+	private boolean mfaEnabled;
+	private String secretImageUri;
+
 }
