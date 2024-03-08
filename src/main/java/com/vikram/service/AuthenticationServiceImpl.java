@@ -14,6 +14,10 @@ import com.vikram.Request.AuthenticationRequest;
 import com.vikram.Request.RegisterRequest;
 import com.vikram.Request.VerificationRequest;
 import com.vikram.config.JwtService;
+import com.vikram.exception.AuthenticationFailedException;
+import com.vikram.exception.RegistrationFailedException;
+import com.vikram.exception.TokenRefreshFailedException;
+import com.vikram.exception.VerificationFailedException;
 import com.vikram.model.Role;
 import com.vikram.model.User;
 import com.vikram.model.response.AuthenticationResponse;
@@ -36,6 +40,8 @@ public class AuthenticationServiceImpl  implements AuthenticationService{
 	private final TwoFactorAuthenticationService tfaService;
 
 	public AuthenticationResponse register(RegisterRequest request) {
+		
+		try {
 		var user = User.builder().firstname(request.getFirstname()).lastname(request.getLastname())
 				.email(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).role(Role.ADMIN)
 				.mfaEnabled(request.isMfaEnabled()).build();
@@ -49,9 +55,14 @@ public class AuthenticationServiceImpl  implements AuthenticationService{
 		var refreshToken = jwtService.generateRefreshToken(user);
 		return AuthenticationResponse.builder().secretImageUri(tfaService.generateQrCodeImageUri(user.getSecret()))
 				.accessToken(jwtToken).refreshToken(refreshToken).mfaEnabled(user.isMfaEnabled()).build();
+		} catch (Exception e) {
+	        throw new RegistrationFailedException("Registration failed: " + e.getMessage());
+	    }
 	}
 
 	public AuthenticationResponse authenticate(AuthenticationRequest request) {
+		
+		try {
 		authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		var user = repository.findByEmail(request.getEmail()).orElseThrow();
@@ -62,9 +73,14 @@ public class AuthenticationServiceImpl  implements AuthenticationService{
 		var refreshToken = jwtService.generateRefreshToken(user);
 		return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).mfaEnabled(false)
 				.build();
+		} catch (Exception e) {
+	        throw new AuthenticationFailedException("Authentication failed: " + e.getMessage());
+	    }
 	}
 
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		try {
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		final String refreshToken;
 		final String userEmail;
@@ -82,9 +98,15 @@ public class AuthenticationServiceImpl  implements AuthenticationService{
 				new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
 			}
 		}
+		
+		} catch (Exception e) {
+	        throw new TokenRefreshFailedException("Token refresh failed: " + e.getMessage());
+	    }
 	}
 
 	public AuthenticationResponse verifyCode(VerificationRequest verificationRequest) {
+		
+		try {
 		User user = repository.findByEmail(verificationRequest.getEmail())
 				.orElseThrow(() -> new EntityNotFoundException(
 						String.format("No user found with %S", verificationRequest.getEmail())));
@@ -94,6 +116,11 @@ public class AuthenticationServiceImpl  implements AuthenticationService{
 		}
 		var jwtToken = jwtService.generateToken(user);
 		return AuthenticationResponse.builder().accessToken(jwtToken).mfaEnabled(user.isMfaEnabled()).build();
+		
+		} catch (Exception e) {
+	        throw new VerificationFailedException("Verification failed: " + e.getMessage());
+	    }
 	}
+		
 	
 }
