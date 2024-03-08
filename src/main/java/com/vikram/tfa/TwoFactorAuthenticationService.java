@@ -30,9 +30,9 @@ public class TwoFactorAuthenticationService {
 
     public String generateQrCodeImageUri(String secret) {
         QrData data = new QrData.Builder()
-                .label("Alibou Coding 2FA example")
+                .label("Vikram Coding 2FA example")
                 .secret(secret)
-                .issuer("Alibou-Coding")
+                .issuer("Vikram-Coding")
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)
