@@ -43,7 +43,7 @@ public class AuthenticationServiceImpl  implements AuthenticationService{
 		
 		try {
 		var user = User.builder().firstname(request.getFirstname()).lastname(request.getLastname())
-				.email(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).role(Role.ADMIN)
+				.email(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).role(Role.USER)
 				.mfaEnabled(request.isMfaEnabled()).build();
 
 		// if MFA enabled --> Generate Secret

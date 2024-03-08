@@ -2,6 +2,7 @@ package com.vikram.service;
 
 import java.io.IOException;
 
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,7 +15,7 @@ import com.vikram.Request.AuthenticationRequest;
 import com.vikram.Request.RegisterRequest;
 import com.vikram.Request.VerificationRequest;
 import com.vikram.config.JwtService;
-import com.vikram.model.Role;
+
 import com.vikram.model.User;
 import com.vikram.model.response.AuthenticationResponse;
 import com.vikram.repository.UserRepository;

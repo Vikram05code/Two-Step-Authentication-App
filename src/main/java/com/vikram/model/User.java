@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name="_user")
-public class User  implements UserDetails{
+public class User implements UserDetails{
 	
 	@Id
 	@GeneratedValue
@@ -72,6 +72,6 @@ public class User  implements UserDetails{
 	  @Override
 	  public boolean isEnabled() {
 	    return true;
-	  }
+	  }  
 	  
 }
